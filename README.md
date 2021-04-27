@@ -1,26 +1,40 @@
 # Comandos para executar o desafio01 - PFA
-
-* ## Dentro da pasta mysql
-    > Executar o comando para criar a imagem:
+> Criar a rede para conexão entre os serviços:
+```bash
+$ docker network create desafio01
+```
+* ## Subir o serviço do mysql
+    > Executar o comando para criar o container:
     ```bash
-    $ sudo docker build -t mysqldbdesafio01 .
+    $ docker run --name desafio01mysql --network=desafio01 -d -e MYSQL_ROOT_PASSWORD=desafio01  mysql/mysql-server:5.7
     ```
-    > Após execução da imagem, subir o container:
+    > Acessar o conteiner do banco de dados:
     ```bash
-    docker run -d -p 3306:3306 --network=desafio01 -e MYSQL_ROOT_PASSWORD=dbfullcycle -e MYSQL_DATABASE=fullcycle mysqldbdesafio01    
-    ``` 
+    $ docker exec -it desafio01mysql 
+    ```
+    > Entrar no gerenciador do BD:
+    ```bash
+    $ mysql -uroot -p (desafio01)     
+    ```
+    > Executar o script que está na pasta mysql/scripts/CreateDatabase.sql
 * ## Dentro da pasta node
-    > Executar o container a partir da imagem criada no dockerhub:
+    > Executar o comando para gerar a imagem:
     ```bash
-    $ sudo docker run arturmangabeira/nodejs --network=desafio01 -p 3000:3000 -v $(pwd):/usr/src/app     
+    $ docker build -t arturmangabeira/nodejs .
+    ```
+    > Executar o container a partir da imagem criada :
+    ```bash
+    $ docker run --network=desafio01 -v $(pwd):/usr/src/app --name desafio01nodejs arturmangabeira/nodejs   
     ```
 * ## Dentro da pasta nginx
     > Executar o comando para criar a imagem:
     ```bash
-    $ sudo docker build -t nginxdesafio01 .
+    $ docker build -t arturmangabeira/nginx .
     ```
     > Após execução da imagem, executar o container:
     ```bash
-    docker run -d -p 8080:80 --network=desafio01 nginxdesafio01
+    $ docker run -d -p 8080:80 --network=desafio01 --name desafio01nginx arturmangabeira/nginx
     ```
-Acessar a aplicação no navegador através do endereço: http://localhost:8080.          
+Acessar a aplicação no navegador através do endereço: http://localhost:8080.
+
+Imagem da aplicação nodejs criada no dockerhub pelo endereço: https://hub.docker.com/r/arturmangabeira/nodejs.
