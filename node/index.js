@@ -2,12 +2,16 @@ const {response} = require('express')
 const express = require('express')
 const app = express()
 
-const db = require("./db/db.js");
+
 
 app.get('/', async (req, res) => {
-    
-    const cursos = await db.selectCursos();
-    res.sen("Estou aqui !!!");
+    try{
+        const db = require("./db/db");    
+        const cursos = await db.selectCursos();
+        res.json(cursos);
+    }catch(err){        
+        res.send(err);
+    }    
 })
 
 app.listen(3000, () => {
